@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ehr-system-api="http://www.mulesoft.org/schema/mule/ehr-system-api" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:emergency-response-system-api="http://www.mulesoft.org/schema/mule/emergency-response-system-api"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/emergency-response-system-api http://www.mulesoft.org/schema/mule/emergency-response-system-api/current/mule-emergency-response-system-api.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/ehr-system-api http://www.mulesoft.org/schema/mule/ehr-system-api/current/mule-ehr-system-api.xsd">
+	<sub-flow name="reportVitalSigns" doc:id="711973df-c936-4656-be6b-6ef6f2749c9c" >
+		<set-variable value="golden-gateway" doc:name="mock destination = Golden Gateway" doc:id="b5674d54-2d22-4de0-89c3-1a8cd6ba9779" variableName="destination"/>
+		<set-variable value="44" doc:name="Mock EHR Encounter" doc:id="f763df22-6062-41fe-bbd7-e0c3e1b5f07c" variableName="encounter"/>
+		<logger level="INFO" doc:name="INFO" doc:id="8f2b6f7e-dde1-43e8-a3ec-014b5e579fd9" message="starting vital signs report" category="reportVitals"/>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="d2638ed3-32de-4f16-88dd-797481affc76" >
+			<route >
+				<ee:transform doc:name="Emergency Response Request" doc:id="a5182d49-c597-4e19-b0e6-e2dc88dc3785">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	emergencyResponseId: attributes.uriParams.emergencyResponseId as Number,
+	source: "manual",
+	recorded: now(),
+	patientId: 1000,
+	vitals: payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<emergency-response-system-api:record-vitals doc:name="Emergency Response Vitals" doc:id="9ca7788a-6c92-4a98-bf35-e650931f0b88" config-ref="Emergency_Response_System_API_Config" />
+				<logger level="INFO" doc:name="INFO" doc:id="802492b0-efe7-4fdf-b880-401c1408654f" message='#["Saved emergency response vital signs: $(payload.id)"]' category="reportVitals"/>
+			</route>
+			<route >
+				<ee:transform doc:name="EHR Request" doc:id="6f757f7f-a791-414f-94cd-6bdc77997a32">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	source: "manual",
+	vitals: payload
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+				<ehr-system-api:report-vital-signs doc:name="EHR" doc:id="554ce3e9-4854-45ea-bcd3-171a3e4b4b51" config-ref="EHR_System_API_Config" facility-slug="#[vars.destination]" encounter-id="#[vars.encounter]" />
+				<logger level="INFO" doc:name="INFO" doc:id="329ee7f7-ae34-41c4-aa12-b936cb2f66f7" message='#["Saved EHR vital signs: $(payload.id), count $(sizeOf(payload.vitalSigns))"]' category="reportVitals"/>
+			</route>
+		</scatter-gather>
+		<logger level="INFO" doc:name="INFO combined" doc:id="1197a726-2233-433a-8f19-0cb6777ddcb8" message='#[output text/plain&#10;var emergencyResultMessage = payload."0"&#10;var ehrResultMessage = payload."1"&#10;var ehrCount = sizeOf(ehrResultMessage.payload.vitalSigns)&#10;---&#10;"Emergency Response ID $(emergencyResultMessage.payload.id) has total number of EHR vital signs $(ehrCount)"]' category="reportVitals"/>
+		<ee:transform doc:name="Response" doc:id="effbe562-4808-4d03-a310-f4a58cec5b59" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var emergencyResponseResultPayload = payload."0".payload
+var ehrResultPayload = payload."1".payload
+---
+{
+	emergencyResponseId: emergencyResponseResultPayload.id,
+	ehrId: ehrResultPayload.id
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>
