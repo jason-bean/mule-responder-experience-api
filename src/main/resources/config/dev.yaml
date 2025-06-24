@@ -1,3 +1,15 @@
 api:
   client:
     id: "d7902bf06a1c44c7976ef7fd11ce763a"
+
+emergencyResponse:
+  host: emergency-response-sapi-3qg65v.5sc6y6-2.usa-e2.cloudhub.io
+  port: "443"
+  path: /api
+  protocol: HTTPS
+  
+ehr:
+  host: ehr-sapi-dev-3qg65v.5sc6y6-1.usa-e2.cloudhub.io
+  port: "443"
+  path: /api
+  protocol: HTTPS
