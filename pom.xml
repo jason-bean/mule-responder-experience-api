@@ -98,7 +98,7 @@
 		<dependency>
 			<groupId>cbd2f175-045f-4267-8eb6-6fe3ca100276</groupId>
 			<artifactId>responder-api</artifactId>
-			<version>1.0.2</version>
+			<version>1.0.5</version>
 			<classifier>raml</classifier>
 			<type>zip</type>
 		</dependency>

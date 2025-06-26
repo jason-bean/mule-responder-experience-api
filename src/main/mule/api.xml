@@ -3,7 +3,7 @@
     <http:listener-config name="responder-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="responder-api-config" api="resource::cbd2f175-045f-4267-8eb6-6fe3ca100276:responder-api:1.0.2:raml:zip:responder-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="responder-api-config" api="resource::cbd2f175-045f-4267-8eb6-6fe3ca100276:responder-api:1.0.5:raml:zip:responder-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="responder-api-main">
         <http:listener config-ref="responder-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
