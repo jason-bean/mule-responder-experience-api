@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_178d8b2e_d264_4321_b795_42c331d89ab6_Input_Variables_destination = "three-rivers" | "golden-gateway" | "allegheny-urgent-care" | "allegheny-valley" | "steel-city" | "monongahela"
+

@@ -3,7 +3,7 @@
     <http:listener-config name="responder-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="responder-api-config" api="resource::cbd2f175-045f-4267-8eb6-6fe3ca100276:responder-api:1.0.5:raml:zip:responder-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="responder-api-config" api="resource::cbd2f175-045f-4267-8eb6-6fe3ca100276:responder-api:1.0.6:raml:zip:responder-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="responder-api-main">
         <http:listener config-ref="responder-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -94,6 +94,15 @@ output application/json
                     </ee:variables>
                 </ee:transform>
             </on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="false" doc:name="On Error Propagate" doc:id="73607d02-f141-43c5-bb46-8b06954ec380" type="APP:API_UNAUTHORIZED">
+				<ee:transform doc:name="Status Code 502" doc:id="7e30e910-0084-4e6a-9294-e4fccea8e655" >
+					<ee:message >
+					</ee:message>
+					<ee:variables >
+						<ee:set-variable variableName="httpStatus" ><![CDATA[502]]></ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
         </error-handler>
     </flow>
     <flow name="responder-api-console">
@@ -135,5 +144,8 @@ output text/plain
     </flow>
     <flow name="post:\vehicles\(vehicleId)\emergencyResponse\(emergencyResponseId)\vital-signs:application\json:responder-api-config">
         <flow-ref doc:name="reportVitals" doc:id="7f6b8ac3-aa55-4103-86d5-2b9dc06e6589" name="reportVitalSigns" />
+        <error-handler>
+            <on-error-propagate enableNotifications="true" logException="false" doc:name="On Error Propagate" doc:id="9014eb67-5fda-440b-a3d9-0e0a68d65396" />
+        </error-handler>
     </flow>
 </mule>
