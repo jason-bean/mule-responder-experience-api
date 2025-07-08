@@ -14,3 +14,8 @@ ehr:
   port: "443"
   path: /api
   protocol: HTTPS
+
+mq:
+  organizationId: "cbd2f175-045f-4267-8eb6-6fe3ca100276"
+  environmentId: "23d0fdc8-a7ec-45c8-ab28-ffd5d08c1ba1"
+  clientId: "e20093ca75e44a888d285babe9c4328c"
