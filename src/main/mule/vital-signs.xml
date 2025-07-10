@@ -110,6 +110,6 @@ fun apiErrorInfo(err) = {
 				</on-error-propagate>
 			</error-handler>
 		</try>
-		<logger level="INFO" doc:name="INFO combined" doc:id="1197a726-2233-433a-8f19-0cb6777ddcb8" message='#[output text/plain&#10;var emergencyResultMessage = payload."0"&#10;var ehrResultMessage = payload."1"&#10;var ehrCount = sizeOf(ehrResultMessage.payload.vitalSigns)&#10;---&#10;"Emergency Response ID $(emergencyResultMessage.payload.id) has total number of EHR vital signs $(ehrCount)"]' category="reportVitals" />
+		<!-- [STUDIO:"INFO combined"]<logger level="INFO" doc:name="INFO combined" doc:id="1197a726-2233-433a-8f19-0cb6777ddcb8" message='#[output text/plain&#10;var emergencyResultMessage = payload."0"&#10;var ehrResultMessage = payload."1"&#10;var ehrCount = sizeOf(ehrResultMessage.payload.vitalSigns)&#10;&#45;&#45;-&#10;"Emergency Response ID $(emergencyResultMessage.payload.id) has total number of EHR vital signs $(ehrCount)"&#93;' category="reportVitals" /> [STUDIO] -->
 	</sub-flow>
 </mule>
